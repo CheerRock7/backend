@@ -22,7 +22,9 @@ export async function GET() {
     });
   }
 }
+
 //-------------------------------------------------------------------------------------
+
 export async function POST(request) {
   try {
   const { firstname, lastname, username, password } = await request.json();
@@ -42,7 +44,9 @@ export async function POST(request) {
   });
   }
   }
+
 //-------------------------------------------------------------------------------------
+
 export async function PUT() {
   try {
     return new Response(JSON.stringify({ message: "PUT DATA OK"}), {
