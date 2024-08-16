@@ -2,6 +2,7 @@
 import { Client } from 'pg';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
+import { hashPassword } from '../lib/auth';
 dotenv.config();
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -50,26 +51,27 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
-  const { id, firstname, lastname } = await request.json();
-  const res = await client.query('UPDATE tbl_users SET firstname = $1, lastname = $2 WHERE id = $3 RETURNING *', [firstname, lastname, id]);
+  const { id, firstname, lastname, username, password } = await request.json();
+  const res = await client.query('UPDATE tbl_users SET firstname = $1, lastname = $2, username = $3, password = $4 WHERE id = $5 RETURNING *', [firstname, lastname, username, password, id]);
   if (res.rows.length === 0) {
   return new Response(JSON.stringify({ error: 'User not found' }), {
   status: 404,
-  headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+  headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
   });
   }
   return new Response(JSON.stringify(res.rows[0]), {
   status: 200,
-  headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+  headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
   });
   } catch (error) {
   console.error(error);
   return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
   status: 500,
-  headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+  headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
   });
   }
   }
+
 //-------------------------------------------------------------------------------------
 export async function DELETE(request) {
   try {
